@@ -33,7 +33,7 @@ int main() {
         }
     }
 
-    // Tampilkan hasil
+    
     cout << "\nMahasiswa dengan IPK tertinggi:\n";
     cout << "Nama : " << mhs[idxMax].nama << endl;
     cout << "NIM  : " << mhs[idxMax].nim << endl;
