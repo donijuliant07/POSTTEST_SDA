@@ -1,10 +1,8 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include <algorithm> 
-#include <cstdlib> 
-
-#define MAX 100 
+#include <algorithm>
+#include <cstdlib>
 
 using namespace std;
 
@@ -13,54 +11,58 @@ struct Layanan {
     string namaHewan;
     string jenisPerawatan;
     int harga;
+    Layanan* next;
 };
 
-Layanan queueArr[MAX]; 
-int front = -1, rear = -1;
-
-Layanan stackArr[MAX];
-int top = -1;
-
 void tukarData(Layanan* a, Layanan* b) {
-    Layanan temp = *a;
-    *a = *b;
-    *b = temp;
+    int tempId = a->id;
+    string tempNama = a->namaHewan;
+    string tempJenis = a->jenisPerawatan;
+    int tempHarga = a->harga;
+
+    a->id = b->id;
+    a->namaHewan = b->namaHewan;
+    a->jenisPerawatan = b->jenisPerawatan;
+    a->harga = b->harga;
+
+    b->id = tempId;
+    b->namaHewan = tempNama;
+    b->jenisPerawatan = tempJenis;
+    b->harga = tempHarga;
 }
 
-void linearSearchNama(Layanan*& arr, int n, string target) {
+void linearSearchNama(Layanan* arr, int n, string target) {
     bool found = false;
     cout << "\n<=== Hasil Pencarian Linear Search ===>\n";
     for (int i = 0; i < n; i++) {
         cout << "Iterasi " << i + 1 << " | Mengecek Nama: " << (arr + i)->namaHewan << "\n";
-        
         if ((arr + i)->namaHewan == target) {
-            cout << " -> DITEMUKAN: ID " << (arr + i)->id << " | Pasien: " << (arr + i)->namaHewan 
-                 << " | Perawatan: " << (arr + i)->jenisPerawatan << " | Biaya: Rp" << (arr + i)->harga << "\n\n";
+            cout << " -> DITEMUKAN: ID " << (arr + i)->id << " | Pasien: " << (arr + i)->namaHewan
+                << " | Perawatan: " << (arr + i)->jenisPerawatan << " | Biaya: Rp" << (arr + i)->harga << "\n\n";
             found = true;
         }
     }
     if (!found) cout << " -> Pasien bernama '" << target << "' tidak ditemukan.\n";
 }
 
-void sortByID(Layanan*& arr, int n) {
+void sortByID(Layanan* arr, int n) {
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
             if ((arr + j)->id > (arr + j + 1)->id) {
-                tukarData((arr + j), (arr + j + 1)); 
+                tukarData((arr + j), (arr + j + 1));
             }
         }
     }
 }
 
-void fibonacciSearchID(Layanan*& arr, int n, int target) {
+void fibonacciSearchID(Layanan* arr, int n, int target) {
     if (n == 0) return;
-    
     sortByID(arr, n);
     cout << "\n[Sistem] Data diurutkan berdasarkan ID untuk Fibonacci Search.\n";
 
-    int fibMMm2 = 0;   
-    int fibMMm1 = 1;   
-    int fibM = fibMMm2 + fibMMm1;  
+    int fibMMm2 = 0;
+    int fibMMm1 = 1;
+    int fibM = fibMMm2 + fibMMm1;
 
     while (fibM < n) {
         fibMMm2 = fibMMm1;
@@ -68,48 +70,45 @@ void fibonacciSearchID(Layanan*& arr, int n, int target) {
         fibM = fibMMm2 + fibMMm1;
     }
 
-    int offset = -1; 
+    int offset = -1;
     int iterasi = 1;
 
     cout << "<=== Proses Iterasi Fibonacci Search ===>\n";
     while (fibM > 1) {
         int i = min(offset + fibMMm2, n - 1);
-        
         cout << "Iterasi " << iterasi++ << " | Mengecek Index " << i << " (ID: " << (arr + i)->id << ")\n";
 
         if ((arr + i)->id < target) {
             cout << " -> ID lebih kecil. Buang area kiri, geser ke KANAN.\n";
-            fibM = fibMMm1;           
-            fibMMm1 = fibMMm2;        
-            fibMMm2 = fibM - fibMMm1; 
+            fibM = fibMMm1;
+            fibMMm1 = fibMMm2;
+            fibMMm2 = fibM - fibMMm1;
             offset = i;
-        } 
-        else if ((arr + i)->id > target) {
+        } else if ((arr + i)->id > target) {
             cout << " -> ID lebih besar. Buang area kanan, geser ke KIRI.\n";
-            fibM = fibMMm2;              
-            fibMMm1 = fibMMm1 - fibMMm2; 
-            fibMMm2 = fibM - fibMMm1;    
-        } 
-        else {
+            fibM = fibMMm2;
+            fibMMm1 = fibMMm1 - fibMMm2;
+            fibMMm2 = fibM - fibMMm1;
+        } else {
             cout << " -> TARGET DITEMUKAN!\n\n";
-            cout << "ID: " << (arr + i)->id << " | Pasien: " << (arr + i)->namaHewan 
-                 << " | Perawatan: " << (arr + i)->jenisPerawatan << " | Biaya: Rp" << (arr + i)->harga << "\n";
-            return; 
+            cout << "ID: " << (arr + i)->id << " | Pasien: " << (arr + i)->namaHewan
+                << " | Perawatan: " << (arr + i)->jenisPerawatan << " | Biaya: Rp" << (arr + i)->harga << "\n";
+            return;
         }
     }
 
     if (fibMMm1 && offset + 1 < n && (arr + offset + 1)->id == target) {
         cout << "Iterasi Terakhir | Mengecek Index " << offset + 1 << "\n";
         cout << " -> TARGET DITEMUKAN!\n\n";
-        cout << "ID: " << (arr + offset + 1)->id << " | Pasien: " << (arr + offset + 1)->namaHewan 
-             << " | Perawatan: " << (arr + offset + 1)->jenisPerawatan << " | Biaya: Rp" << (arr + offset + 1)->harga << "\n";
+        cout << "ID: " << (arr + offset + 1)->id << " | Pasien: " << (arr + offset + 1)->namaHewan
+            << " | Perawatan: " << (arr + offset + 1)->jenisPerawatan << " | Biaya: Rp" << (arr + offset + 1)->harga << "\n";
         return;
     }
 
     cout << "\n[!] Data Layanan dengan ID '" << target << "' tidak ditemukan.\n";
 }
 
-void bubbleSortNama(Layanan*& arr, int n) {
+void bubbleSortNama(Layanan* arr, int n) {
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
             if ((arr + j)->namaHewan > (arr + j + 1)->namaHewan) {
@@ -120,115 +119,122 @@ void bubbleSortNama(Layanan*& arr, int n) {
     cout << "\n<=== Data berhasil diurutkan berdasarkan Nama Pasien (A-Z) ===>\n";
 }
 
-bool isQueueEmpty() {
-    return front == -1 || front > rear;
+bool isQueueEmpty(Layanan* front) {
+    return front == NULL;
 }
 
-bool isQueueFull() {
-    return rear == MAX - 1;
-}
+void enqueue(Layanan*& front, Layanan*& rear, Layanan dataBaru) {
+    Layanan* newNode = new Layanan;
+    newNode->id = dataBaru.id;
+    newNode->namaHewan = dataBaru.namaHewan;
+    newNode->jenisPerawatan = dataBaru.jenisPerawatan;
+    newNode->harga = dataBaru.harga;
+    newNode->next = NULL;
 
-void enqueue(Layanan*& q, Layanan dataBaru) {
-    if (isQueueFull()) {
-        cout << "Queue overflow! Antrian pemeriksaan sudah penuh.\n"; 
-        return;
+    if (front == NULL) {
+        front = newNode;
+        rear = newNode;
+    } else {
+        rear->next = newNode;
+        rear = newNode;
     }
-    if (front == -1) {
-        front = 0;
-    }
-    rear++;
-    *(q + rear) = dataBaru;
     cout << "Pasien " << dataBaru.namaHewan << " berhasil masuk ke antrian pemeriksaan!\n";
 }
 
-void tampilAntrian(Layanan*& q) {
+void tampilAntrian(Layanan* front) {
     cout << "\n<=== Daftar Antrian Pemeriksaan (Front ke Rear) ===>\n";
-    if (isQueueEmpty()) {
+    if (isQueueEmpty(front)) {
         cout << "Antrian pemeriksaan kosong.\n";
         return;
     }
     cout << left << setw(5) << "ID" << setw(15) << "Nama Pasien" << setw(20) << "Jenis Perawatan" << "Harga\n";
-    for (int i = front; i <= rear; i++) { 
-        cout << left << setw(5) << (q + i)->id
-             << setw(15) << (q + i)->namaHewan
-             << setw(20) << (q + i)->jenisPerawatan
-             << "Rp" << (q + i)->harga << "\n";
+    Layanan* temp = front;
+    while (temp != NULL) {
+        cout << left << setw(5) << temp->id
+            << setw(15) << temp->namaHewan
+            << setw(20) << temp->jenisPerawatan
+            << "Rp" << temp->harga << "\n";
+        temp = temp->next;
     }
 }
 
-void push(Layanan*& s, Layanan data) {
-    if (top >= MAX - 1) { 
-        cout << "Stack overflow! Kapasitas riwayat tindakan penuh.\n";
-        return;
-    }
-    top++;
-    *(s + top) = data; 
-    cout << "[Riwayat] Tindakan pasien " << data.namaHewan << " berhasil dicatat.\n";
+void push(Layanan*& top, Layanan dataBaru) {
+    Layanan* newNode = new Layanan;
+    newNode->id = dataBaru.id;
+    newNode->namaHewan = dataBaru.namaHewan;
+    newNode->jenisPerawatan = dataBaru.jenisPerawatan;
+    newNode->harga = dataBaru.harga;
+    newNode->next = top;
+    top = newNode;
+    cout << "[Riwayat] Tindakan pasien " << dataBaru.namaHewan << " berhasil dicatat.\n";
 }
 
-void pop(Layanan*& s) {
-    if (top < 0) { 
+void pop(Layanan*& top) {
+    if (top == NULL) {
         cout << "Stack underflow! Tidak ada riwayat yang bisa dibatalkan.\n";
         return;
     }
-    Layanan dataTerhapus = *(s + top);
-    top--; 
-    cout << "Riwayat tindakan untuk pasien '" << dataTerhapus.namaHewan << "' telah dibatalkan (dihapus).\n";
+    Layanan* temp = top;
+    top = top->next;
+    cout << "Riwayat tindakan untuk pasien '" << temp->namaHewan << "' telah dibatalkan (dihapus).\n";
+    delete temp;
 }
 
-void tampilRiwayat(Layanan*& s) {
+void tampilRiwayat(Layanan* top) {
     cout << "\n<=== Riwayat Tindakan Medis (Terbaru ke Terlama) ===>\n";
-    if (top < 0) {
+    if (top == NULL) {
         cout << "Riwayat tindakan masih kosong.\n";
         return;
     }
     cout << left << setw(5) << "ID" << setw(15) << "Nama Pasien" << setw(20) << "Jenis Perawatan" << "Harga\n";
-    for (int i = top; i >= 0; i--) {
-        cout << left << setw(5) << (s + i)->id
-             << setw(15) << (s + i)->namaHewan
-             << setw(20) << (s + i)->jenisPerawatan
-             << "Rp" << (s + i)->harga << "\n";
+    Layanan* temp = top;
+    while (temp != NULL) {
+        cout << left << setw(5) << temp->id
+            << setw(15) << temp->namaHewan
+            << setw(20) << temp->jenisPerawatan
+            << "Rp" << temp->harga << "\n";
+        temp = temp->next;
     }
 }
 
-void panggilPasien(Layanan*& q, Layanan*& s) {
-    if (isQueueEmpty()) {
+void panggilPasien(Layanan*& front, Layanan*& rear, Layanan*& top) {
+    if (isQueueEmpty(front)) {
         cout << "Queue underflow! Tidak ada pasien di antrian.\n";
         return;
     }
-    
-    Layanan pasienDipanggil = *(q + front); 
-    front++;
-    
-    if (isQueueEmpty()) {
-        front = -1;
-        rear = -1;
+
+    Layanan* temp = front;
+    front = front->next;
+
+    if (front == NULL) {
+        rear = NULL;
     }
-    
+
     cout << "\n>>> DOKTER MEMANGGIL PASIEN <<<\n";
-    cout << "Memeriksa Pasien ID: " << pasienDipanggil.id << " | Nama: " << pasienDipanggil.namaHewan << "\n";
-    
-    push(s, pasienDipanggil);
+    cout << "Memeriksa Pasien ID: " << temp->id << " | Nama: " << temp->namaHewan << "\n";
+
+    push(top, *temp);
+    delete temp;
 }
 
-void peekAntrianDanRiwayat(Layanan*& q, Layanan*& s) {
+void peekAntrianDanRiwayat(Layanan* front, Layanan* top) {
     cout << "\n<=== Informasi Terdepan & Terakhir (PEEK) ===>\n";
     cout << "[Pasien Terdepan Antrian]: ";
-    if (isQueueEmpty()) {
+    if (front == NULL) {
         cout << "KOSONG\n";
     } else {
-        cout << "ID " << (q + front)->id << " - " << (q + front)->namaHewan << " (Menunggu giliran)\n";
+        cout << "ID " << front->id << " - " << front->namaHewan << " (Menunggu giliran)\n";
     }
-    
+
     cout << "[Tindakan Terakhir Riwayat]: ";
-    if (top < 0) {
+    if (top == NULL) {
         cout << "KOSONG\n";
     } else {
-        cout << "ID " << (s + top)->id << " - " << (s + top)->namaHewan << " (Telah diperiksa)\n";
+        cout << "ID " << top->id << " - " << top->namaHewan << " (Telah diperiksa)\n";
     }
 }
 
-void tampilData(Layanan*& arr, int n) {
+void tampilData(Layanan* arr, int n) {
     cout << "\n<=== Database Layanan Pasien Klinik ===>\n";
     if (n == 0) {
         cout << "Data masih kosong.\n";
@@ -237,13 +243,13 @@ void tampilData(Layanan*& arr, int n) {
     cout << left << setw(5) << "ID" << setw(15) << "Nama Pasien" << setw(20) << "Jenis Perawatan" << "Harga\n";
     for (int i = 0; i < n; i++) {
         cout << left << setw(5) << (arr + i)->id
-             << setw(15) << (arr + i)->namaHewan
-             << setw(20) << (arr + i)->jenisPerawatan
-             << "Rp" << (arr + i)->harga << "\n";
+            << setw(15) << (arr + i)->namaHewan
+            << setw(20) << (arr + i)->jenisPerawatan
+            << "Rp" << (arr + i)->harga << "\n";
     }
 }
 
-void tambahData(Layanan*& arr, int &n) {
+void tambahData(Layanan* arr, int& n) {
     cout << "\n<=== Tambah Data Database Klinik ===>\n";
     cout << "Masukkan ID Layanan (Angka): ";
     cin >> (arr + n)->id;
@@ -254,6 +260,7 @@ void tambahData(Layanan*& arr, int &n) {
     getline(cin, (arr + n)->jenisPerawatan);
     cout << "Masukkan Biaya: ";
     cin >> (arr + n)->harga;
+    (arr + n)->next = NULL;
     n++;
     cout << "Data berhasil ditambahkan ke database!\n";
 }
@@ -261,9 +268,11 @@ void tambahData(Layanan*& arr, int &n) {
 int main() {
     Layanan dataKlinik[100];
     Layanan* ptrData = dataKlinik;
-    Layanan* ptrQueue = queueArr;
-    Layanan* ptrStack = stackArr;
-    
+
+    Layanan* queueFront = NULL;
+    Layanan* queueRear = NULL;
+    Layanan* stackTop = NULL;
+
     int jumlahData = 0;
     int pilihan;
 
@@ -271,7 +280,7 @@ int main() {
         system("cls");
 
         cout << "|===============================================|\n";
-        cout << "|      KLINIK VETCARE & PET SPA BY DONI         |\n";
+        cout << "|       KLINIK VETCARE & PET SPA BY DONI        |\n";
         cout << "|===============================================|\n";
         cout << "| DATABASE PASIEN:                              |\n";
         cout << "| 1. Tampil Database Layanan                    |\n";
@@ -291,11 +300,11 @@ int main() {
         cout << "| 0. Keluar                                     |\n";
         cout << "|===============================================|\n";
         cout << "Pilih Menu: ";
-        
-        if (!(cin >> pilihan)) { 
+
+        if (!(cin >> pilihan)) {
             cout << "Input harus berupa angka!\n";
-            cin.clear(); 
-            cin.ignore(1000, '\n'); 
+            cin.clear();
+            cin.ignore(1000, '\n');
             system("pause");
             continue;
         }
@@ -350,23 +359,23 @@ int main() {
                 getline(cin, pasienAntri.jenisPerawatan);
                 cout << "Masukkan Estimasi Biaya: ";
                 cin >> pasienAntri.harga;
-                enqueue(ptrQueue, pasienAntri);
+                enqueue(queueFront, queueRear, pasienAntri);
                 break;
             }
             case 7:
-                tampilAntrian(ptrQueue);
+                tampilAntrian(queueFront);
                 break;
             case 8:
-                panggilPasien(ptrQueue, ptrStack);
+                panggilPasien(queueFront, queueRear, stackTop);
                 break;
             case 9:
-                tampilRiwayat(ptrStack);
+                tampilRiwayat(stackTop);
                 break;
             case 10:
-                pop(ptrStack);
+                pop(stackTop);
                 break;
             case 11:
-                peekAntrianDanRiwayat(ptrQueue, ptrStack);
+                peekAntrianDanRiwayat(queueFront, stackTop);
                 break;
             default:
                 cout << "Pilihan tidak valid! Silakan coba lagi.\n";
